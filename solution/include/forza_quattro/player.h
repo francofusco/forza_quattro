@@ -3,6 +3,11 @@
 
 #include <forza_quattro/board.h>
 
+/* Base class defining the "interface" of a player. It mainly consists of a
+ * method called "choose" that asks a player to make a move. Since the method
+ * used to choose a column depends on the specific strategy adopted by the
+ * player, it will be implemented by sub-classes.
+ */
 class Player {
 public:
   // Creates a player and keep track of the board.

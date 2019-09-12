@@ -4,7 +4,7 @@ class App : public piksel::BaseApp {
 public:
   App() : piksel::BaseApp(640, 480, "Hello Piksel") {}
 
-  // called one on startup
+  // called once on startup
   void setup() {
     auto h2rgb = [](double t) {
       if(t < 0) t += 1;

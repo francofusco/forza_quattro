@@ -11,6 +11,7 @@ MousePlayer::MousePlayer(Board& board)
 bool MousePlayer::choose(unsigned int& col) {
   // get currently selected column
   col = board_.mouseColumn();
+
   // if the column is not a valid index, exit
   if(col == board_.cols())
     return false;

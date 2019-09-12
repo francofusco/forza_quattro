@@ -9,26 +9,74 @@ Board::Board(
   unsigned int rows,
   unsigned int columns
 )
-: piksel::BaseApp(columns*CELL_SIZE, rows*CELL_SIZE, "Forza Quattro"),
-  rows_(rows),
+: piksel::BaseApp(columns*CELL_SIZE, rows*CELL_SIZE, "Forza Quattro"), // call the constructor of the base class
+  rows_(rows), // keep track of the number of rows and columns of the grid
   cols_(columns),
-  red_player_(nullptr),
-  yellow_player_(nullptr)
+  red_player_(nullptr), // make sure that the pointers are invalid at first: they could
+  yellow_player_(nullptr) // contain any (possibly invalid) address in the beginning
 {
   // nothing to do here, we just needed to initialize few members
   // the rest will be done directly in "setup()"
 }
 
 
-Board::Board() : Board(6,7)
+Board::Board()
+: Board(6,7) // constructor delegation
 {
   // nothing to do here, we delegated the work to Board(uint,uint)
 }
 
 
-Board::Board(unsigned int side) : Board(side,side)
+Board::Board(unsigned int side)
+: Board(side,side) // constructor delegation
 {
   // nothing to do here, we delegated the work to Board(uint,uint)
+}
+
+
+const unsigned int& Board::cols() const {
+  return cols_;
+}
+
+
+const unsigned int& Board::rows() const {
+  return rows_;
+}
+
+
+const Board::Cell& Board::cell(unsigned int r, unsigned int c) const {
+  return grid_[r*cols_ + c];
+}
+
+
+Board::Cell& Board::cell(unsigned int r, unsigned int c) {
+  return grid_[r*cols_ + c];
+}
+
+
+void Board::cell_center(
+  unsigned int r,
+  unsigned int c,
+  float& x,
+  float& y
+)
+{
+  x = 0.5*CELL_SIZE + c * CELL_SIZE;
+  y = 0.5*CELL_SIZE + r * CELL_SIZE;
+}
+
+
+bool Board::next(unsigned int column, unsigned int& row) const {
+  // starting from the bottom, try to find the first empty cell in a given column
+  for(unsigned int r = rows_; r > 0; r--) {
+    if(cell(r-1,column) == Cell::EMPTY) {
+      // found it!
+      row = r-1;
+      return true;
+    }
+  }
+  // loop completed: no empty spaces available
+  return false;
 }
 
 
@@ -62,6 +110,10 @@ void Board::setup() {
     throw std::runtime_error("Red player has not been assigned");
   if(yellow_player_ == nullptr)
     throw std::runtime_error("Yellow player has not been assigned");
+  // tell the players that we are about to start the game, so that they can
+  // reset their internal variables
+  red_player_->start();
+  yellow_player_->start();
 }
 
 
@@ -91,7 +143,6 @@ void Board::draw(piksel::Graphics& g) {
 
   // show next position, if given.
   unsigned int r;
-  // unsigned int c = (unsigned int) (mx_/CELL_SIZE);
   if(preview_col_ < cols_ && next(preview_col_,r)) {
     // the current column has a free cell: show where the circle would end up
     cell_center(r, preview_col_, x, y);
@@ -102,12 +153,20 @@ void Board::draw(piksel::Graphics& g) {
     g.ellipse(x, y, CELL_DIAMETER, CELL_DIAMETER);
   }
 
+  // We have a winner, display some text
   if(winner_ != Cell::EMPTY) {
     g.textSize(0.4*CELL_SIZE);
     g.fill(glm::vec4(0,0,0,1));
     g.text(std::string(winner_==Cell::RED ? "Red" : "Yellow") + " player won!", CELL_SIZE, CELL_SIZE);
   }
 
+}
+
+
+void Board::mouseMoved(int x, int y) {
+  // store only the horizontal position, as we need to use it only for knowing
+  // which column is being selected
+  mx_ = x;
 }
 
 
@@ -118,35 +177,8 @@ void Board::mousePressed(int) {
     return;
   }
 
+  // store the value
   mouse_pressed_ = true;
-
-  // // from the mouse position, get the current column index
-  // unsigned int c = (unsigned int) (mx_/CELL_SIZE);
-  //
-  // // check that we are within valid bounds
-  // if(c >= cols_)
-  //   return;
-  //
-  // // get the next available cell, if any
-  // unsigned int r;
-  // if(!next(c,r))
-  //   return;
-  //
-  // // fill the cell
-  // cell(r,c) = red_ ? Cell::RED : Cell::YELLOW;
-  //
-  // // count the maximum number of adjacent cells
-  // unsigned int adj = count(cell(r,c), r, c, 1, 0, 0) + count(cell(r,c), r, c, -1, 0, 0);
-  // adj = std::max(adj, count(cell(r,c), r, c, 0, 1, 0) + count(cell(r,c), r, c, 0, -1, 0));
-  // adj = std::max(adj, count(cell(r,c), r, c, 1, 1, 0) + count(cell(r,c), r, c, -1, -1, 0));
-  // adj = std::max(adj, count(cell(r,c), r, c, 1, -1, 0) + count(cell(r,c), r, c, -1, 1, 0));
-  //
-  // // the current cell is filled, so at least 3 neighbors are required to make 4 in a row
-  // if(adj >= 3)
-  //   winner_ = red_ ? Cell::RED : Cell::YELLOW;
-  //
-  // // change active player
-  // red_ = !red_;
 }
 
 
@@ -169,33 +201,20 @@ unsigned int Board::mouseColumn() const {
 
 
 void Board::preview(unsigned int col) {
+  // get the next available position
   unsigned int row;
   if(!next(col, row)) {
+    // send an error if the colum is full
     throw std::invalid_argument("Request to preview in column with index " +
       std::to_string(col) + " but the column is full"
     );
   }
 
+  // save the requested column for later
   preview_col_ = col;
 }
 
 
-bool Board::next(unsigned int column, unsigned int& row) const {
-  // starting from the bottom, try to find the first empty cell in a given column
-  for(unsigned int r = rows_; r > 0; r--) {
-    if(cell(r-1,column) == Cell::EMPTY) {
-      // found it!
-      row = r-1;
-      return true;
-    }
-  }
-  // loop completed: no empty spaces available
-  return false;
-}
-
-
-
-// gives the number of adjacent circles in one direction
 unsigned int Board::count(
   Cell val, // identifier of the color
   unsigned int r, // current row
@@ -205,10 +224,17 @@ unsigned int Board::count(
   unsigned int num // how many circles have been counted so far
 ) const
 {
-  // check that we are not in an edge
-  if( (dir_r < 0 && r == 0) || (dir_r > 0 && r == rows_-1) )
+  // if both directions are zero, we would end up in an infinite loop
+  if(dir_r == 0 && dir_c == 0) {
+    throw std::invalid_argument("In order to count consecutive chips, 'dir_r' "
+      "and 'dir_c' cannot be both 0"
+    );
+  }
+
+  // check that we can make the next step
+  if( (dir_r < 0 && r < -dir_r) || (dir_r > 0 && r+dir_r >= rows_) )
     return num;
-  if( (dir_c < 0 && c == 0) || (dir_c > 0 && c == cols_-1) )
+  if( (dir_c < 0 && c < -dir_c) || (dir_c > 0 && c+dir_c >= cols_) )
     return num;
 
   // evaluate next cell to be visited
@@ -248,7 +274,7 @@ void Board::update() {
   // fill the column
   cell(row, col) = p.color();
 
-  // count the maximum number of adjacent cells
+  // count the maximum number of adjacent chips
   unsigned int adj = count(cell(row,col), row, col, 1, 0, 0) + count(cell(row,col), row, col, -1, 0, 0);
   adj = std::max(adj, count(cell(row,col), row, col, 0, 1, 0) + count(cell(row,col), row, col, 0, -1, 0));
   adj = std::max(adj, count(cell(row,col), row, col, 1, 1, 0) + count(cell(row,col), row, col, -1, -1, 0));
