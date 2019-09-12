@@ -1,2 +1,34 @@
+# do not include piksel's repo
 piksel
+
+# discard build folders
 solution/build
+build
+
+# do not include LaTeX intermediary files
+latex/**/*.
+latex/**/*.log
+latex/**/*.aux
+latex/**/*.auxlock
+latex/**/*.run.xml
+latex/**/*.synctex.gz
+latex/**/*.glo
+latex/**/*.idx
+latex/**/*.toc
+latex/**/*.ist
+latex/**/*.acn
+latex/**/*.acr
+latex/**/*.alg
+latex/**/*.bbl
+latex/**/*.blg
+latex/**/*.dvi
+latex/**/*.glg
+latex/**/*.gls
+latex/**/*.ilg
+latex/**/*.ind
+latex/**/*.lof
+latex/**/*.lot
+latex/**/*.maf
+latex/**/*.mtc
+latex/**/*.mtc1
+latex/**/*.out
