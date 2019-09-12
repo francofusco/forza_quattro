@@ -1,5 +1,6 @@
 #include <forza_quattro/board.h>
 #include <forza_quattro/player.h>
+#include <stdexcept>
 
 const int Board::CELL_SIZE = 80;
 const int Board::CELL_DIAMETER = 65;
@@ -11,10 +12,24 @@ Board::Board(
 : piksel::BaseApp(columns*CELL_SIZE, rows*CELL_SIZE, "Forza Quattro"),
   rows_(rows),
   cols_(columns),
-  mouse_pressed_(false),
   red_player_(nullptr),
   yellow_player_(nullptr)
-{ }
+{
+  // nothing to do here, we just needed to initialize few members
+  // the rest will be done directly in "setup()"
+}
+
+
+Board::Board() : Board(6,7)
+{
+  // nothing to do here, we delegated the work to Board(uint,uint)
+}
+
+
+Board::Board(unsigned int side) : Board(side,side)
+{
+  // nothing to do here, we delegated the work to Board(uint,uint)
+}
 
 
 void Board::setPlayers(Player& red, Player& yellow) {

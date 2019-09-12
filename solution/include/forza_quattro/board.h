@@ -2,7 +2,6 @@
 #define FORZA_QUATTRO_BOARD_H
 
 #include <piksel/baseapp.hpp>
-#include <stdexcept>
 
 // This is what we call a "forward declaration" of a class: we promise the
 // compiler that, sooner or later, we will provide detailed information about
@@ -11,11 +10,11 @@ class Player;
 
 class Board : public piksel::BaseApp {
 public:
-  // Default constructor: 7-by-7 grid
-  Board() : Board(7) { }
+  // Default constructor: 6-by-7 grid.
+  Board();
 
-  // Use a NxN squared grid
-  Board(unsigned int side) : Board(side,side) { }
+  // Use a NxN squared grid.
+  Board(unsigned int side);
 
   // Constructor that accepts a given grid size.
   Board(unsigned int rows, unsigned int columns);
@@ -23,6 +22,8 @@ public:
   static const int CELL_SIZE; // size of a single grid cell
   static const int CELL_DIAMETER; // size of the circle within a cell
 
+  // Simple enum to define the state of a cell; it can be used also to
+  // distinguish between players colors.
   enum class Cell {
     EMPTY,
     RED,
@@ -44,29 +45,28 @@ public:
   // Allows to visualize a move without making it.
   void preview(unsigned int col);
 
-  // Returns the index of the column pointed by the mouse, or the number of columns if no one is pointed.
+  // Returns the index of the column pointed by the mouse.
   unsigned int mouseColumn() const;
 
   // Returns true if the mouse has been pressed since last call to this method.
   bool mousePressed();
 
+  // Keep track of the two players, also giving them a color.
   void setPlayers(Player& red, Player& yellow);
 
 private:
-
-  // called once on startup
+  // Called once on startup.
   void setup() override;
 
-  // Main loop function
+  // Main loop function. It asks players to make a move and renders the grid.
   void draw(piksel::Graphics& g) override;
 
-  // Called when the mouse is pressed
+  // Called when the mouse is pressed.
   void mousePressed(int button) override;
 
-  // Called when the mouse is moved
+  // Called when the mouse is moved.
   void mouseMoved(int x, int y) override {
     mx_ = x;
-    my_ = y;
   }
 
   // Auxiliary function that will ask the current player to make a choice.
@@ -100,13 +100,12 @@ private:
   const unsigned int rows_, cols_; // grid size
   std::vector<Cell> grid_; // grid codes
   bool red_; // if true, red plays; if false, yellow plays
-  float mx_, my_; // last known position of the mouse
+  float mx_; // last known position of the mouse
   bool mouse_pressed_; // stores the state of the mouse
-  unsigned int preview_col_;
-  Cell winner_;
-  Player* red_player_;
-  Player* yellow_player_;
-
+  unsigned int preview_col_; // stores information about a preview request
+  Cell winner_; // who won the game
+  Player* red_player_; // first player
+  Player* yellow_player_; // second player
 };
 
 #endif
