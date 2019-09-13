@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
     cols = std::atoi(argv[2]);
 
   // create the game app
-  Board game(size);
+  Board game(rows, cols);
   // create the players
   MousePlayer p1(game);
   RandomPlayer p2(game);

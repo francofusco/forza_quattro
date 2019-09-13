@@ -5,28 +5,23 @@ public:
   App() : piksel::BaseApp(640, 480, "Hello Piksel") {}
 
   // called once on startup
-  void setup() {
-    auto h2rgb = [](double t) {
-      if(t < 0) t += 1;
-      else if(t > 1) t -= 1;
-      if(t < 1/6.) return 6*t;
-      if(t < 1/2.) return 1.;
-      if(t < 2/3.) return (2/3.-t)*6;
-      return 0.;
-    };
+  void setup() override {
+    // select random background color
     std::srand(time(NULL));
-    double h = (std::rand() % 256)/255.;
-    color_ = glm::vec4(h2rgb(h+1./3), h2rgb(h), h2rgb(h-1./3), 1);
+    double r = (std::rand() % 256)/255.;
+    double g = (std::rand() % 256)/255.;
+    double b = (std::rand() % 256)/255.;
+    color_ = glm::vec4(r, g, b, 1);
   }
 
   // main loop function
   void draw(piksel::Graphics& g) override {
+    // set background and draw a circle
     g.background(color_);
-    g.rect(50, 50, 100, 100);
     g.ellipse(mouse_x_, mouse_y_, 60, 60);
   }
 
-  // event-driven function
+  // called whenever the mouse is moved
   void mouseMoved(int x, int y) override {
     mouse_x_ = x;
     mouse_y_ = y;
@@ -35,12 +30,13 @@ public:
 private:
   float mouse_x_; // last known x-coordinate of the mouse
   float mouse_y_; // last known y-coordinate of the mouse
-  glm::vec4 color_;
+  glm::vec4 color_; // background color
 };
 
 
 
 int main() {
+  // create the app and run it
   App app;
   app.start();
 }

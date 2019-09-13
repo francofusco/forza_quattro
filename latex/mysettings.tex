@@ -1,0 +1,81 @@
+% links
+\hypersetup{
+  colorlinks=true,
+  linkcolor=red,
+  urlcolor=blue
+}
+
+
+
+% abbreviations
+\newcommand{\eg}{\emph{e.g.}}
+\newcommand{\ie}{\emph{i.e.}}
+\newcommand{\cfr}{\emph{cfr.}}
+
+
+
+% custom colors
+\definecolor{mygreen}{rgb}{0, 0.6, 0}
+\definecolor{myllgray}{rgb}{0.95, 0.95, 0.95}
+\definecolor{myddgray}{rgb}{0.25, 0.25, 0.25}
+\definecolor{myblue}{rgb}{0, 0.3, 0.8}
+
+
+% environment for C++ code
+\lstdefinestyle{mycpp}{
+  basicstyle=\small\ttfamily,
+  %frame=single,
+  language=C++,
+  %backgroundcolor=\color{myllgray},
+  commentstyle=\color{mygreen},
+  keywordstyle=\color{myblue},
+  numbers=left,
+  numbersep=5pt,
+  numberstyle=\footnotesize\color{black},
+  %stringstyle=\color{orange},
+  showstringspaces=false
+}
+
+
+% environment for bash/terminal code
+\lstdefinestyle{myterm}{
+basicstyle=\small\ttfamily,
+%language=bash,
+commentstyle=\color{mygreen},
+keywordstyle=\bfseries,
+numbers=none,
+showstringspaces=false,
+}
+
+
+
+% environment for CMake code
+\lstdefinestyle{mycmake}{
+  basicstyle=\small\ttfamily,
+  %frame=single,
+  %backgroundcolor=\color{myllgray},
+  commentstyle=\color{mygreen},
+  morecomment=[l][\color{mygreen}]{\#},
+  numbers=left,
+  numbersep=5pt,
+  numberstyle=\footnotesize\color{black},
+  showstringspaces=false,
+  keywords=[1]{
+    cmake_minimum_required,
+    project,
+    add_executable,
+    add_library,
+    add_subdirectory,
+    target_include_directories,
+    target_link_libraries,
+    set,
+  },
+  keywordstyle=[1]\color{myblue},
+  keywords=[2]{
+    VERSION,
+    PUBLIC,
+    PROJECT_NAME,
+    CMAKE_CXX_STANDARD,
+  },
+  keywordstyle=[2]\color{red},
+}

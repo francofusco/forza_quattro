@@ -1,13 +1,12 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.1)
 project(forza_quattro)
 set(CMAKE_CXX_STANDARD 11)
 
 add_subdirectory(piksel)
 
-add_executable(example src/piksel_example.cpp)
-target_include_directories(example PUBLIC piksel/src)
-target_link_libraries(example piksel)
-
+add_executable(piksel_example src/piksel_example.cpp)
+target_include_directories(piksel_example PUBLIC piksel/src)
+target_link_libraries(piksel_example piksel)
 
 add_library(forza_quattro
   src/board.cpp
