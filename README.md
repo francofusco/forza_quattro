@@ -1,5 +1,5 @@
 <p align="center">
-  <a><img alt="f4" src="./latex/f4.png"></a>
+  <a><img alt="f4" src="./latex/f4.png" width="200"></a>
 </p>
 
 C++ assignment for the ARPRO / PROAV courses at Centrale Nantes.
