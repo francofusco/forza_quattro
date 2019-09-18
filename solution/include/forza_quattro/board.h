@@ -107,6 +107,7 @@ private:
   bool mouse_pressed_; // stores the state of the mouse
   unsigned int preview_col_; // stores information about a preview request
   Cell winner_; // who won the game
+  unsigned int free_cells_; // used to check if there is a "draw"
   Player* red_player_; // first player
   Player* yellow_player_; // second player
 };

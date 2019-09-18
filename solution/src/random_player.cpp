@@ -25,6 +25,6 @@ bool RandomPlayer::choose(unsigned int& col) {
   col = cols[std::rand() % cols.size()];
 
   // wait 0.5s before playing
-  wait(500);
+  wait(200);
   return true;
 }

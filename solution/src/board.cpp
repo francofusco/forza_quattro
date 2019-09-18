@@ -99,6 +99,7 @@ void Board::setup() {
   // fill all the grid with empty cells
   for(auto& c : grid_)
     c = Cell::EMPTY;
+  free_cells_ = grid_.size();
   // red goes first
   red_ = true;
   // no one won yet
@@ -112,6 +113,10 @@ void Board::setup() {
     throw std::runtime_error("Red player has not been assigned");
   if(yellow_player_ == nullptr)
     throw std::runtime_error("Yellow player has not been assigned");
+  // make sure that the colors are properly set, even if someone changed them
+  // externally
+  red_player_->setColor(Cell::RED);
+  yellow_player_->setColor(Cell::YELLOW);
   // tell the players that we are about to start the game, so that they can
   // reset their internal variables
   red_player_->start();
@@ -122,7 +127,7 @@ void Board::setup() {
 
 void Board::draw(piksel::Graphics& g) {
   // call update() here, provided that no player won already
-  if(winner_ == Cell::EMPTY)
+  if(winner_ == Cell::EMPTY && free_cells_ > 0)
     update();
 
   // blue background
@@ -155,11 +160,14 @@ void Board::draw(piksel::Graphics& g) {
     g.ellipse(x, y, CHIP_DIAMETER, CHIP_DIAMETER);
   }
 
-  // We have a winner, display some text
+  // if we have a winner, display some text
+  g.textSize(0.4*CELL_SIZE);
+  g.fill(glm::vec4(0,0,0,1));
   if(winner_ != Cell::EMPTY) {
-    g.textSize(0.4*CELL_SIZE);
-    g.fill(glm::vec4(0,0,0,1));
     g.text(std::string(winner_==Cell::RED ? "Red" : "Yellow") + " player won!", CELL_SIZE, CELL_SIZE);
+  }
+  else if(free_cells_ == 0) {
+    g.text("Game ended in a draw", 0.5*CELL_SIZE, CELL_SIZE);
   }
 
 }
@@ -174,7 +182,7 @@ void Board::mouseMoved(int x, int y) {
 
 void Board::mousePressed(int) {
   // check if the game has to be reset
-  if(winner_ != Cell::EMPTY) {
+  if(winner_ != Cell::EMPTY || free_cells_ == 0) {
     setup();
     return;
   }
@@ -275,6 +283,7 @@ void Board::update() {
 
   // fill the column
   cell(row, col) = p.color();
+  --free_cells_;
 
   // count the maximum number of adjacent chips
   unsigned int adj = count(cell(row,col), row, col, 1, 0, 0) + count(cell(row,col), row, col, -1, 0, 0);

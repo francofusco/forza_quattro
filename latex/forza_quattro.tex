@@ -379,6 +379,153 @@ Player* yellow_player_;
 \end{center}
 Make sure to initialize the two pointers to \texttt{nullptr} in the constructor, so that in the beginning they point to a known invalid address -- they could otherwise contain any value and it would be impossible to know whether they are valid or not.
 
-Note that if you compile the code you will almost certainly get a compilation error 
+Note that if you compile the code you will almost certainly get a compilation error like:
+\begin{center}
+  \ttfamily
+  error: `Player' does not name a type: Player* red\_player\_;
+\end{center}
+This is due to something that is (sometimes) denoted as ``circular dependency''. This happens when a class \texttt{A} uses/has a member of type \texttt{B}, which in turn uses/has a member of type \texttt{A}. The problem can be solved using a \emph{forward declaration}, which in our case corresponds to adding right before the declaration of \texttt{Board} the ``incomplete'' declaration of \texttt{Player}:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+class Player; // forward declaration
+
+class Board {
+  ...
+  // The compiler does not really know how the `Player' class works
+  // but at least it now knows that something like that exists
+  Player* red_player_;
+};
+\end{lstlisting}
+\end{minipage}
+\end{center}
+
+Up to now, the pointers to the \texttt{Player} instances are simply \texttt{nullptr}. To allow assigning players properly, let's add the public method
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+void setPlayers(Player& red, Player& yellow);
+\end{lstlisting}
+\end{minipage}
+\end{center}
+which should copy the address of the two given objects into the internal pointers. Make sure to check that the addresses are different, \ie, that the user did not call \texttt{setPlayers(x,x)}. You can now modify the main program to include the players before the game starts.
+
+
+\subsubsection{Making players choose}
+
+Add two private member variables to \texttt{Board}:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+bool red_playing_;
+Cell winner_;
+\end{lstlisting}
+\end{minipage}
+\end{center}
+the former used to know whose turn it is now, the latter to know who is the winner (we can use \texttt{Cell::EMPTY} to indicate that no one won yet).
+
+Now add the private method \texttt{void update()} which will be used to ask the current player to pick a column. To implement it, try to follow the given pseudo-code:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+void Board::update() {
+  // select the current player depending on the value of `red_playing_'
+  // (store the active player in a reference called `p'
+  
+  // call p.choose(column): if it returns false, exit immediately
+  
+  // if a column was selected, check that it has space:
+  // if not, throw an exception
+  
+  // get the row in which the chip should be inserted, then use
+  // the method `cell' to insert the chip in the grid - the color
+  // to be used is p.color()
+  
+  // TODO LATER: check if the player won
+  
+  // switch the current player
+}
+\end{lstlisting}
+\end{minipage}
+\end{center}
+
+Finally, add the following at the very beginning of the \texttt{draw} method:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+if(winner_ == Cell::EMPTY)
+  update();
+\end{lstlisting}
+\end{minipage}
+\end{center}
+which ensures that, if no one won yet, the players are continuously asked to make a choice.
+
+
+
+
+\subsubsection{Right before starting a game}
+
+To make sure that everything is properly setup before starting a game, we can override the method \texttt{setup} from \texttt{BaseApp}. Inside it, you should do a couple of operations:
+
+In addition, make the method assign the correct colors to the players, \eg, by calling \begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+void Board::setup() {
+  // clear all the values in the grid, to make sure they are EMPTY
+  
+  // initialize red_playing_
+  
+  // initialize winner_
+  
+  // check that the Player pointers are not nullptr
+  // (throw an exception if they are)
+  
+  // set the color of the red and yellow player
+  // using Player::setColor
+  
+  // call Player::start
+}
+\end{lstlisting}
+\end{minipage}
+\end{center}
+
+And that's it! Well... almost!
+
+
+\subsubsection{Checking who won}
+
+You can start the game with two random players, but they will keep on playing until the grid is entirely filled. This is because we did not check yet whether a player won after making a move. Go back to the \texttt{update} method, and try to figure out how to check if the current player won the game.
+
+\underline{Hint}: you can try to use a recursive auxiliary function that counts how many cells of the same color there are in a given direction (left, left+up, up, right+up, right, \etc).
+
+In addition, in the \texttt{draw} method you can add a message that says which player won (if any).
+
+
+
+
+\subsubsection{Resetting the game with a ``click''}
+
+As the very last step of this basic implementation, let's add the ability to reset a game by a mouse click. We can easily do that by overriding the method \texttt{mousePressed}, so that whenever the mouse is pressed the game is reset (just by calling \texttt{setup}) if the game has ended.
+
+
+
+
+\subsection{Advanced \texttt{Board}: support for human players}
+
+
+\begin{itemize}
+  \item mouse motion
+  \item mouse click
+  \item preview of chips
+\end{itemize}
+
+
+\subsection{\texttt{HumanPlayer}}
+
+
+
+\section*{What next?}
+
+
 
 \end{document}
