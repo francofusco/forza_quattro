@@ -362,8 +362,23 @@ We have enough tools now to implement our first (rather inefficient) player type
 
 \subsection{Class \texttt{Board} -- integrating players}
 
+We can now add players to our ``Four in a Row'' game. We will need to introduce new members to the existing \texttt{Board} class, to store the player and to let him/her/it choose columns during the game.
 
 
 
+\subsubsection{Adding players}
+
+To add a player, let's start by including the relevant header and by adding two variables to the class \texttt{Board}:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+Player* red_player_;
+Player* yellow_player_;
+\end{lstlisting}
+\end{minipage}
+\end{center}
+Make sure to initialize the two pointers to \texttt{nullptr} in the constructor, so that in the beginning they point to a known invalid address -- they could otherwise contain any value and it would be impossible to know whether they are valid or not.
+
+Note that if you compile the code you will almost certainly get a compilation error 
 
 \end{document}

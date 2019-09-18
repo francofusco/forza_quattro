@@ -6,7 +6,7 @@
 // This is what we call a "forward declaration" of a class: we promise the
 // compiler that, sooner or later, we will provide detailed information about
 // it, ie, we will provide a piece of code with its full definition!.
-class Player;
+// class Player;
 
 /* Our class inherits from Piksel's BaseApp class, and therefore it is a
  * "runnable" program. It will thus need to override some of the methods from

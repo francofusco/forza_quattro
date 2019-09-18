@@ -1,5 +1,10 @@
-# do not include piksel's repo
+# do not include piksel's repo, nor the symlink in the solution folder
 piksel
+solution/piksel
+
+# discard piksel's data folder
+data
+solution/data
 
 # discard build folders
 solution/build
