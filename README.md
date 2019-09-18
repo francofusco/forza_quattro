@@ -21,6 +21,3 @@ cmake .. -DBUILD_SOLUTIONS=ON
 make
 ./solution/solved_forza_quattro
 ```
-
-The commands assume that you are in the root folder of the project and that
-the repository has just been downloaded.
