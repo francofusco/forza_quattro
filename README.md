@@ -1,4 +1,4 @@
-C++ assignment for the ARPRO / PROAV courses at Centrale Nantes.
+## C++ assignment for the ARPRO / PROAV courses at Centrale Nantes.
 
 <p align="center">
   <a><img alt="f4" src="./latex/f4.png" width="300"></a>
