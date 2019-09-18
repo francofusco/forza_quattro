@@ -44,7 +44,7 @@ Using a terminal, move to the main folder of the assignment and download piksel 
 git clone --recursive https://github.com/bernhardfritz/piksel.git
 \end{center}
 
-To test if everything works fine, create in the project root a new folder named \texttt{src}. Add the new file \texttt{piksel\_example.cpp} and paste the following code inside it\footnote{The file can be copied directly from \texttt{solution/src/piksel\_example.cpp}}:
+To test if everything works fine, create in the project root a new folder named \texttt{src}. Add the new file \texttt{piksel\string_example.cpp} and paste the following code inside it\footnote{The file can be copied directly from \texttt{solution/src/piksel\string_example.cpp}}:
 
 
 \lstinputlisting[style=mycpp]{../solution/src/piksel_example.cpp}
@@ -85,7 +85,7 @@ sudo make install
 \end{minipage}
 \end{center}
 
-To check if the installation went fine, try to type \texttt{cmake --version} on your console: you should see the newly installed version 3.12.1. Also, as a good rule, do not delete the folder that contains the compiled CMake sources, \eg, \texttt{\textasciitilde/program\_sources/cmake\_3.12.1}. In fact, if in the future you wish to remove the installed version, it will suffice to move inside such directory and type \texttt{sudo make uninstall}. As a plus, from now on you can use the folder \texttt{program\_sources} to install programs from their sources.
+To check if the installation went fine, try to type \texttt{cmake --version} on your console: you should see the newly installed version 3.12.1. Also, as a good rule, do not delete the folder that contains the compiled CMake sources, \eg, \texttt{\textasciitilde/program\string_sources/cmake\string_3.12.1}. In fact, if in the future you wish to remove the installed version, it will suffice to move inside such directory and type \texttt{sudo make uninstall}. As a plus, from now on you can use the folder \texttt{program\string_sources} to install programs from their sources.
 
 \begin{mdframed}[hidealllines=true,backgroundcolor=red!20]
   \underline{\textsc{Be careful}}: by default, the new CMake will be installed in \texttt{/usr/local}. If you have already a CMake binary installed there, the procedures above might override it completely. For a safer procedure, make a backup before typing \texttt{sudo make install}. You can do that simply by running:
@@ -98,7 +98,7 @@ To check if the installation went fine, try to type \texttt{cmake --version} on 
 
 A ``quick-n-dirty'' workaround is also possible: simply open the file \texttt{piksel/CMakeLists.txt} and change the required version of CMake to the one that you have, \eg, 3.1. Note that with this solution the build might fail completely or that some piksel's functionalities might not work as intended.
 
-Coming back to compiling piksel, after a successful configuration type \texttt{make} to build the executable and finally \texttt{./piksel\_example} to run it. You should see a rectangular window appearing in your screen, with a solid colored background. In addition, when moving the mouse inside the window, a white circle should be drawn following you. If so, then congratulations, piksel has been correctly compiled!
+Coming back to compiling piksel, after a successful configuration type \texttt{make} to build the executable and finally \texttt{./piksel\string_example} to run it. You should see a rectangular window appearing in your screen, with a solid colored background. In addition, when moving the mouse inside the window, a white circle should be drawn following you. If so, then congratulations, piksel has been correctly compiled!
 
 
 
@@ -207,7 +207,7 @@ std::vector<Cell> grid_;
 \end{lstlisting}
 \end{minipage}
 \end{center}
-As their names suggest, \texttt{rows\_} and \texttt{cols\_} contain the size of the grid, \ie, $R$ and $C$. The content of the grid is stored in the vector \texttt{grid\_}, whose size will be set later to $R\times C$. Note that we use a ``linear'' structure (the vector) to store a matrix-like content (the grid). This is a pretty common choice in programming, and we will see later how to provide utility methods to access its content in a simple way.
+As their names suggest, \texttt{rows\string_} and \texttt{cols\string_} contain the size of the grid, \ie, $R$ and $C$. The content of the grid is stored in the vector \texttt{grid\string_}, whose size will be set later to $R\times C$. Note that we use a ``linear'' structure (the vector) to store a matrix-like content (the grid). This is a pretty common choice in programming, and we will see later how to provide utility methods to access its content in a simple way.
 
 \subsubsection{Constructors}
 
@@ -221,7 +221,7 @@ Board(unsigned int rows, unsigned int columns);
 \end{lstlisting}
 \end{minipage}
 \end{center}
-The first one should build a $6\times 7$ grid using \emph{constructor delegation}. Similarly, the second version will generate a squared grid with \texttt{size} rows and columns. The last constructor is the one that actually performs all the initialization: it should call \texttt{BaseApp}'s constructor\footnote{The size of the canvas should be related to the number of rows and columns in the grid, as well as to the \texttt{CELL\_SIZE}}, save the number of rows/columns in the grid and initialize \texttt{grid\_} to the proper size, with all cells being initially empty.
+The first one should build a $6\times 7$ grid using \emph{constructor delegation}. Similarly, the second version will generate a squared grid with \texttt{size} rows and columns. The last constructor is the one that actually performs all the initialization: it should call \texttt{BaseApp}'s constructor\footnote{The size of the canvas should be related to the number of rows and columns in the grid, as well as to the \texttt{CELL\string_SIZE}}, save the number of rows/columns in the grid and initialize \texttt{grid\string_} to the proper size, with all cells being initially empty.
 
 Even with this thin definition, you can already try executing some code to start debugging the class. Create a new source file containing a \texttt{main} that instanciates a \texttt{Board} object and runs the application.
 
@@ -237,9 +237,9 @@ const Cell& cell(unsigned int r, unsigned int c) const;
 \end{lstlisting}
 \end{minipage}
 \end{center}
-The first two methods should simply return the internal members \texttt{rows\_} and \texttt{cols\_}. Please note the \texttt{const} qualifiers both before and after the method declaration: do you understand why they are there? If not, ask the teacher!
+The first two methods should simply return the internal members \texttt{rows\string_} and \texttt{cols\string_}. Please note the \texttt{const} qualifiers both before and after the method declaration: do you understand why they are there? If not, ask the teacher!
 
-The method \texttt{cell} should be used to simplify the access to elements contained inside the vector \texttt{grid\_}. In practice, it should return the value of the cell located at the given row \texttt{r} and column \texttt{c}, and its implementation depends on how you choose to handle the content of the vector. To give an example, a matrix-like structure can be stored in a vector by writing it ``row by row'', also known as \href{https://en.wikipedia.org/wiki/Row-_and_column-major_order#Programming_languages_and_libraries}{row major ordering}. In this case, the index $k$ corresponding to a given row $i$ and column $j$ can be evaluated as $$k = i \times C + j$$
+The method \texttt{cell} should be used to simplify the access to elements contained inside the vector \texttt{grid\string_}. In practice, it should return the value of the cell located at the given row \texttt{r} and column \texttt{c}, and its implementation depends on how you choose to handle the content of the vector. To give an example, a matrix-like structure can be stored in a vector by writing it ``row by row'', also known as \href{https://en.wikipedia.org/wiki/Row-_and_column-major_order#Programming_languages_and_libraries}{row major ordering}. In this case, the index $k$ corresponding to a given row $i$ and column $j$ can be evaluated as $$k = i \times C + j$$
 
 
 \subsubsection{Drawing the board}
@@ -304,12 +304,12 @@ Thanks to the \texttt{Board} reference, the player will be able to query the cur
 
 Place the two variables in the \emph{protected} scope of the class, so that they are not directly accessible from outside, but still visible to children classes.
 
-Finally, provide an accessor and a mutator for the attribute \texttt{color\_}.
+Finally, provide an accessor and a mutator for the attribute \texttt{color\string_}.
 
 
 \subsubsection{Constructor and destructor}
 
-Add a constructor that takes a reference to a \texttt{Board} instance. In the \texttt{.cpp} file, make sure to properly initialize the internal \texttt{board\_} reference. In addition, add a virtual destructor as follows:
+Add a constructor that takes a reference to a \texttt{Board} instance. In the \texttt{.cpp} file, make sure to properly initialize the internal \texttt{board\string_} reference. In addition, add a virtual destructor as follows:
 \begin{center}
 \begin{minipage}{.9\textwidth}
 \begin{lstlisting}[style=mycpp,numbers=none]
@@ -382,7 +382,7 @@ Make sure to initialize the two pointers to \texttt{nullptr} in the constructor,
 Note that if you compile the code you will almost certainly get a compilation error like:
 \begin{center}
   \ttfamily
-  error: `Player' does not name a type: Player* red\_player\_;
+  error: `Player' does not name a type: Player* red\string_player\string_;
 \end{center}
 This is due to something that is (sometimes) denoted as ``circular dependency''. This happens when a class \texttt{A} uses/has a member of type \texttt{B}, which in turn uses/has a member of type \texttt{A}. The problem can be solved using a \emph{forward declaration}, which in our case corresponds to adding right before the declaration of \texttt{Board} the ``incomplete'' declaration of \texttt{Player}:
 \begin{center}
@@ -503,29 +503,97 @@ In addition, in the \texttt{draw} method you can add a message that says which p
 
 
 
-\subsubsection{Resetting the game with a ``click''}
+\subsubsection{Resetting the game with a ``click''}\label{sec:reset_game}
 
 As the very last step of this basic implementation, let's add the ability to reset a game by a mouse click. We can easily do that by overriding the method \texttt{mousePressed}, so that whenever the mouse is pressed the game is reset (just by calling \texttt{setup}) if the game has ended.
 
 
 
 
-\subsection{Advanced \texttt{Board}: support for human players}
+\subsection{Support for human players}
+
+To implement a nicer interface allowing a human to play the game, we will add few functionalities to the existing \texttt{Board} class. In particular, we will add support to handle mouse motion, mouse clicks and a ``preview mode'' to help visualizing the effect of the next move.
 
 
-\begin{itemize}
-  \item mouse motion
-  \item mouse click
-  \item preview of chips
-\end{itemize}
+\subsubsection{Mouse motion support}
+
+When a human is playing, he/she will use the mouse to decide in which column the chip should be placed. For this purpose, we can add the following to our \texttt{Board} class:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+private: int mx_;
+private: void mouseMoved(int x, int y) override;
+public: unsigned int mouseColumn() const;
+\end{lstlisting}
+\end{minipage}
+\end{center}
+The variable \texttt{mx\string_} will store the current horizontal position of the mouse in the canvas, which can be updated inside \texttt{mouseMoved} (using the input variable x only). The method \texttt{mouseColumn} can instead be used to return the current column selected using the mouse. To obtain such column, you need to perform a very simple operation using \texttt{mx\string_} and \texttt{CELL\string_SIZE}.
 
 
-\subsection{\texttt{HumanPlayer}}
+\subsubsection{Handling mouse clicks}
 
+Mouse clicks can be handled in a similar way, by adding the following members to our class:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+private: bool mouse_pressed_;
+public: bool mousePressed();
+\end{lstlisting}
+\end{minipage}
+\end{center}
+The variable \texttt{mouse\string_pressed\string_} can be set to \texttt{true} inside the \texttt{mousePressed(int)} method added in \cref{sec:reset_game} -- provided that the game is not reset! Then, the new method \texttt{mousePressed()} will return \texttt{true} if \texttt{mouse\string_pressed\string_} has been changed, and reset it to \texttt{false}. In practice, the method returns \texttt{true} if the mouse has been clicked at least once since its last call.
+
+
+\subsubsection{Previewing a move}
+
+We can implement a sort of ``move preview'' by adding few lines of code to our class:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+private: unsigned int preview_col_;
+public: void preview(unsigned int col);
+\end{lstlisting}
+\end{minipage}
+\end{center}
+The variable \texttt{preview\string_col\string_} can be used to store in which column we would like to place a chip, even if we are not sure about it yet -- and this is why we want to see a preview! To ``disable'' the preview, we can decide that if the variable above is greater than (or equal to) the number of columns, then the preview should not be shown. The method \texttt{preview} is used to change \texttt{preview\string_col\string_} to a desired column index.
+
+To actually display the preview, we can add in the \texttt{draw} method few lines of code that will add an ellipse in the desired location. By setting the color to either dark red or dark yellow, the ``preview chip'' will be distinguishable from those that have already been placed in the grid.
+
+
+\subsubsection{Adding the \texttt{HumanPlayer} class}
+
+You can now define a human player by adding a new class \texttt{HumanPlayer} inheriting from \texttt{Player}. The only thing you need is to override the \texttt{choose} method, whose pseudo-code is reported below:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+bool HumanPlayer::choose(unsigned int& col) {
+  // get currently selected column from the board
+  
+  // if the column is not a valid index, exit returning false
+  
+  // if the selected column is full, exit returning false
+  
+  // if the mouse has been pressed, exit returning true
+  
+  // if the mouse has not been pressed: only show a preview
+  // and finally exit returning false
+}
+\end{lstlisting}
+\end{minipage}
+\end{center}
+
+Change the main program so that it allows a human player to challenge the ``random AI''.
 
 
 \section*{What next?}
 
+The assignment is over, but you can try to improve and/or extend the code in many ways. Some examples:
+\begin{itemize}
+  \item When a player wins, show which chips are aligned in a row
+  \item Create new (hopefully more powerful) AIs
+  \item Add a ``revert'' functionality to the game, allowing to cancel the last move(s) when the backspace key is pressed
+\end{itemize}
 
+Have fun, and happy coding!
 
 \end{document}

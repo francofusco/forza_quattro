@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
   Board game(rows, cols);
 
   // create the players
-  RandomPlayer p1(game);
+  MousePlayer p1(game);
   RandomPlayer p2(game);
 
   // assign players, then start

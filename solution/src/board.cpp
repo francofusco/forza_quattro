@@ -173,7 +173,7 @@ void Board::draw(piksel::Graphics& g) {
 }
 
 
-void Board::mouseMoved(int x, int y) {
+void Board::mouseMoved(int x, int /*y*/) {
   // store only the horizontal position, as we need to use it only for knowing
   // which column is being selected
   mx_ = x;
