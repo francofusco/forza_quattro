@@ -11,15 +11,15 @@ C++ assignment for the ARPRO / PROAV courses at Centrale Nantes.
   - CMake >= 3.12
   - [piksel](https://github.com/bernhardfritz/piksel)
 
-To compile the solutions:
+To compile and run the solution:
 
 ```
 git clone --recursive https://github.com/bernhardfritz/piksel.git
-ln -s `pwd`/piksel solution
-mkdir solution/build
-cd solution/build
-cmake ..
+mkdir -p build
+cd build
+cmake .. -DBUILD_SOLUTIONS=ON
 make
+./solution/solved_forza_quattro
 ```
 
 The commands assume that you are in the root folder of the project and that

@@ -1,13 +1,8 @@
-# do not include piksel's repo, nor the symlink in the solution folder
+# do not include piksel's repo
 piksel
-solution/piksel
 
-# discard piksel's data folder
+# discard piksel's data folder and the build folder
 data
-solution/data
-
-# discard build folders
-solution/build
 build
 
 # do not include LaTeX intermediary files

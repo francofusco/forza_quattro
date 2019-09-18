@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 11)
 # compile piksel
 add_subdirectory(piksel)
 
-# make headers visible to the compiled sources
-include_directories(include piksel/src)
+# make piksel's headers visible to the compiled sources
+include_directories(piksel/src)
 
 # compile the example
 add_executable(piksel_example src/piksel_example.cpp)
@@ -19,4 +19,11 @@ add_executable(forza_quattro
   # src/other_file.cpp
   # etc.
 )
+target_include_directories(forza_quattro PUBLIC include)
 target_link_libraries(forza_quattro piksel)
+
+# give the option to build examples
+option(BUILD_SOLUTIONS OFF)
+if(${BUILD_SOLUTIONS})
+  add_subdirectory(solution)
+endif(${BUILD_SOLUTIONS})
