@@ -61,9 +61,11 @@ set(CMAKE_CXX_STANDARD 11)
 # tell CMake to compile piksel as well
 add_subdirectory(piksel)
 
+# tell the compiler where to find piksel's headers
+include_directories(piksel/src)
+
 # compile the example
 add_executable(piksel_example src/piksel_example.cpp)
-target_include_directories(piksel_example PUBLIC piksel/src)
 target_link_libraries(piksel_example piksel)
 \end{lstlisting}
 

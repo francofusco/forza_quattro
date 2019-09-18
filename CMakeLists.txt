@@ -1,0 +1,22 @@
+cmake_minimum_required(VERSION 3.1)
+project(forza_quattro)
+set(CMAKE_CXX_STANDARD 11)
+
+# compile piksel
+add_subdirectory(piksel)
+
+# make headers visible to the compiled sources
+include_directories(include piksel/src)
+
+# compile the example
+add_executable(piksel_example src/piksel_example.cpp)
+target_link_libraries(piksel_example piksel)
+
+# compile the game
+add_executable(forza_quattro
+  src/forza_quattro_main.cpp
+  src/board.cpp
+  # src/other_file.cpp
+  # etc.
+)
+target_link_libraries(forza_quattro piksel)
