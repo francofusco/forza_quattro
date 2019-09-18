@@ -12,3 +12,9 @@ Player::Player(Board& board)
 void Player::setColor(const Board::Cell& color) {
   color_ = color;
 }
+
+
+void Player::wait(int ms) {
+  int t = board_.millis() + ms;
+  while(board_.millis() < t); // do nothing!
+}

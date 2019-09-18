@@ -23,5 +23,8 @@ bool RandomPlayer::choose(unsigned int& col) {
 
   // pick a column randomly
   col = cols[std::rand() % cols.size()];
+
+  // wait 0.5s before playing
+  wait(500);
   return true;
 }

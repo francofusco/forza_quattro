@@ -31,6 +31,8 @@ public:
 protected:
   Board& board_; // the board to play on
   Board::Cell color_; // the color given to the player
+
+  void wait(int ms);
 };
 
 #endif

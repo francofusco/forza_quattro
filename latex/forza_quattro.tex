@@ -5,6 +5,7 @@
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{graphicx}
+\usepackage{cleveref}
 \usepackage{listings}
 \usepackage[framemethod=tikz]{mdframed}
 \usepackage{bold-extra}
@@ -208,7 +209,7 @@ std::vector<Cell> grid_;
 \end{center}
 As their names suggest, \texttt{rows\_} and \texttt{cols\_} contain the size of the grid, \ie, $R$ and $C$. The content of the grid is stored in the vector \texttt{grid\_}, whose size will be set later to $R\times C$. Note that we use a ``linear'' structure (the vector) to store a matrix-like content (the grid). This is a pretty common choice in programming, and we will see later how to provide utility methods to access its content in a simple way.
 
-\subsubsection{The constructor}
+\subsubsection{Constructors}
 
 Declare three constructors with the following signatures:
 \begin{center}
@@ -222,8 +223,9 @@ Board(unsigned int rows, unsigned int columns);
 \end{center}
 The first one should build a $6\times 7$ grid using \emph{constructor delegation}. Similarly, the second version will generate a squared grid with \texttt{size} rows and columns. The last constructor is the one that actually performs all the initialization: it should call \texttt{BaseApp}'s constructor\footnote{The size of the canvas should be related to the number of rows and columns in the grid, as well as to the \texttt{CELL\_SIZE}}, save the number of rows/columns in the grid and initialize \texttt{grid\_} to the proper size, with all cells being initially empty.
 
+Even with this thin definition, you can already try executing some code to start debugging the class. Create a new source file containing a \texttt{main} that instanciates a \texttt{Board} object and runs the application.
 
-\subsubsection{Simple accessors}
+\subsubsection{Simple accessors}\label{sec:simple_accessors}
 
 We can proceed by providing simple accessors to the grid properties. Add the following declarations to the public scope of your class:
 \begin{center}
@@ -268,19 +270,99 @@ This basic version of the \texttt{Board} class is almost finished. We just need 
 \begin{center}
 \begin{minipage}{.9\textwidth}
 \begin{lstlisting}[style=mycpp,numbers=none]
-bool next(unsigned int c, unsigned int& r) const;
-Cell& cell(unsigned int r, unsigned int c);
+public: bool next(unsigned int c, unsigned int& r) const;
+private: Cell& cell(unsigned int r, unsigned int c);
 \end{lstlisting}
 \end{minipage}
 \end{center}
 The method \texttt{next} takes the index \texttt{c} of a column and returns \texttt{false} if no additional chips can be inserted there. If the column has still some space instead, the index of the first free row (from the bottom of the grid!) is stored in \texttt{r} and \texttt{true} is returned instead.
 
-WRITE ABOUT THE OTHER CELL ACCESSOR
+The second method is almost identical to the \texttt{cell} accessor defined in \cref{sec:simple_accessors}. The difference is that the returned reference is not constant, \ie, its content can be changed. This is the main reason to put the method in the private scope: anybody can read the value of one cell, but we want the \texttt{Board} class only to be able to change the state of the grid.
 
-TELL TO ADD, IN THE CONSTRUCTOR, FEW LINES TO TEST THE METHODS
+Having added these methods, you can try to manually change the initial state of the grid in the constructor of the class. Use the method \texttt{next} to evaluate valid rows for the given columns and use \texttt{cell} to change their value. Clearly, this manual change is just for temporary testing and we will remove it in the next sections.
+
+
 
 
 \subsection{Class \texttt{Player}}
+
+Let's leave the \texttt{Board} class for a moment -- we will come back to it later -- so that we can start implementing the \texttt{Player} class. We will see in the following how to define it and how to implement new player types for our game.
+
+
+\subsubsection{Protected member variables}
+
+The attributes of the \texttt{Player} class will be just two, the color used by the player and a reference to the board used for the game:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+Board::Cell color_;
+Board& board_;
+\end{lstlisting}
+\end{minipage}
+\end{center}
+Thanks to the \texttt{Board} reference, the player will be able to query the current state of the grid and thus to make decisions for the following move.
+
+Place the two variables in the \emph{protected} scope of the class, so that they are not directly accessible from outside, but still visible to children classes.
+
+Finally, provide an accessor and a mutator for the attribute \texttt{color\_}.
+
+
+\subsubsection{Constructor and destructor}
+
+Add a constructor that takes a reference to a \texttt{Board} instance. In the \texttt{.cpp} file, make sure to properly initialize the internal \texttt{board\_} reference. In addition, add a virtual destructor as follows:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+virtual ~Player() = default;
+\end{lstlisting}
+\end{minipage}
+\end{center}
+To understand the declaration, let's first say that writing \texttt{\textasciitilde Player()} \texttt{=} \texttt{default;} is equivalent to providing an empty destructor, \ie, a destructor whose code is just \texttt{\string{\string}}.\footnote{For this reason, you do not need to add the definition of the destructor in the \texttt{.cpp} file!} However, I believe it is clearer and nicer to write explicitly \texttt{\textasciitilde Player()} \texttt{=} \texttt{default;} rather than \texttt{\textasciitilde Player()} \texttt{\string{\string}}. That being said, having a virtual destructor is not always necessary, and in our specific case would not be mandatory. However, it is part of best practices to add a (even empty) virtual destructor \emph{whenever your class has at least one virtual method}. More information about this can be found in the C++ FAQ entry ``\href{https://isocpp.org/wiki/faq/virtual-functions#virtual-dtors}{\emph{When should my destructor be virtual?}}''. It is not a big deal if you do not fully understand this, but at least be aware that if you plan to do inheritance, there are chances that you will need to provide a virtual destructor to your base class, even if empty.
+
+
+\subsubsection{Virtual methods}
+
+Add the two following public virtual methods to the class:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+virtual bool choose(unsigned int& col) = 0;
+virtual void start() {}
+\end{lstlisting}
+\end{minipage}
+\end{center}
+The first one is a \emph{pure virtual} method, thus making the class \emph{abstract}. Its goal is to choose the next move by storing in \texttt{col} where to insert the chip. The method will return \texttt{true} if a choice is made, and \texttt{false} if the player ``needs more time to think'' (it will be useful when implementing a ``human'' player).
+
+The method \texttt{start} can instead be useful to ``reset a player'' before starting a game -- a single player might play multiple times! However, a default (empty) implementation is already provided for simplicity: it is up to child classes to decide whether it is useful to override it.
+
+
+
+\subsubsection{Wait method}
+
+Finally, we can add a simple auxiliary function (make it as protected):
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+void wait(int ms);
+\end{lstlisting}
+\end{minipage}
+\end{center}
+The function should wait for the given amount of \texttt{ms} milliseconds. To implement it, you can use the \texttt{BaseApp}\texttt{::}\texttt{millis} method, which returns the elapsed time (in milliseconds) since the start of the application. Such pausing function will be useful when implementing ``AI players''.
+
+
+
+\subsubsection{Class \texttt{RandomPlayer}}
+
+We have enough tools now to implement our first (rather inefficient) player type. Create the class \texttt{RandomPlayer} inheriting from \texttt{Player}, and override the \texttt{choose} method so that a valid column is chosen at random. If all columns are full, the method should return \texttt{false} since a choice cannot be made!
+
+
+
+
+
+
+\subsection{Class \texttt{Board} -- integrating players}
+
+
 
 
 

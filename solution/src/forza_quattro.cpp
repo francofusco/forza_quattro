@@ -13,7 +13,8 @@ int main(int argc, char** argv) {
   // create the game app
   Board game(rows, cols);
   // create the players
-  MousePlayer p1(game);
+  // MousePlayer p1(game);
+  RandomPlayer p1(game);
   RandomPlayer p2(game);
   // assign players, then start
   game.setPlayers(p1, p2);
