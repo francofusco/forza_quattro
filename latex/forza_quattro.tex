@@ -139,17 +139,149 @@ Let's start by introducing the rules of the game:
 \begin{itemize}
   \item A rectangular grid of $R\times C$ cells is initially empty
   \item Each of the two players is assigned a color, either red or yellow
-  \item Players alternate in selecting one column out of the $C$ available ones and they are not allowed to pass
+  \item Players alternate in selecting one column out of the $C$ available ones and they are not allowed to pass (a choice must always be made)
   \item A fully filled column cannot be selected
   \item Once a column is selected, a chip is inserted in it reaching the lowest free cell
   \item The first player who aligns four or more chips in any direction (horizontal, vertical, diagonal) wins the game
 \end{itemize}
-
 With these rules in mind, it is decided to implement the game as follows:
-
 \begin{itemize}
   \item An \emph{abstract} class \texttt{Player} provides the \emph{interface} for a player. It will expose a \emph{pure virtual method} called \texttt{choose} that asks to select a column. Concrete implementations of this class will define different strategies, \eg, using the mouse to select a column (human player) or randomly selecting a valid column (a very bad AI).
   \item The class \texttt{Board} will serve two objectives at the same time: on one hand, it will store and handle the grid by exposing methods to query/update cells content, and on the other hand it will take care of graphics management by inheriting from \texttt{BaseApp} and overriding some of its methods. 
 \end{itemize}
+
+In the following, you will be given some suggestions to implement these classes. As almost always in programming, there exist many different ways to accomplish the same task, and thus you might decide to use different strategies. If you feel like there is a better way to implement the code, you are encouraged to give it a try!
+
+
+
+
+
+
+\subsection{Class \texttt{Board} - Basics}
+
+This section concerns the creation of the basic functionalities of the \texttt{Board} class, \ie, those not requiring the class \texttt{Player}. While adding and implementing new methods, remember to compile and run the code frequently in order to spot errors as soon as possible.
+
+First of all, define a new empty class that inherits from \texttt{piksel::BaseApp}. Create the header and source file in the usual way: declarations go in the \texttt{.h} file, while implementations (the instructions of each method) should be in the \texttt{.cpp}. Remember to add the proper \texttt{\#ifndef} \texttt{...} \texttt{\#define} guards and to include relevant headers.
+
+
+
+
+
+\subsubsection{The \texttt{Cell} Enum}
+
+In order to represent the content of a cell in the board, we will use an internal enum named \texttt{Cell}. Its values should reflect the possibility of a cell being empty or filled with a red/yellow chip. You can declare it -- \emph{inside} the class definition -- as:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+enum class Cell {
+  EMPTY,
+  RED,
+  YELLOW
+};
+\end{lstlisting}
+\end{minipage}
+\end{center}
+
+Being an internal class of \texttt{Board}, it is accessible via the syntax \texttt{Board::Cell}, and one of its value by writing, \eg, \texttt{Board::Cell::EMPTY}. Remember to add the declaration in the \emph{public} scope of the class, so that external code fragments can use it as well.
+
+\subsubsection{Member Variables}
+
+To avoid using hard-coded numbers here and there in the code, let's store the geometric parameters of the grid inside two \emph{static} members:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+static const int CELL_SIZE;
+static const int CHIP_DIAMETER;
+\end{lstlisting}
+\end{minipage}
+\end{center}
+The former is used to store the size of the grid (or, equivalently, the distance between two chips) while the latter gives the diameter of a single chip (it should be smaller than the size of the cell). Remember to initialize them in the beginning of the \texttt{board.cpp} file!
+
+In addition, we will need some variables to store the grid. We can do that by adding the following \emph{private} members:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+const unsigned int rows_, cols_;
+std::vector<Cell> grid_;
+\end{lstlisting}
+\end{minipage}
+\end{center}
+As their names suggest, \texttt{rows\_} and \texttt{cols\_} contain the size of the grid, \ie, $R$ and $C$. The content of the grid is stored in the vector \texttt{grid\_}, whose size will be set later to $R\times C$. Note that we use a ``linear'' structure (the vector) to store a matrix-like content (the grid). This is a pretty common choice in programming, and we will see later how to provide utility methods to access its content in a simple way.
+
+\subsubsection{The constructor}
+
+Declare three constructors with the following signatures:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+Board();
+Board(unsigned int size);
+Board(unsigned int rows, unsigned int columns);
+\end{lstlisting}
+\end{minipage}
+\end{center}
+The first one should build a $6\times 7$ grid using \emph{constructor delegation}. Similarly, the second version will generate a squared grid with \texttt{size} rows and columns. The last constructor is the one that actually performs all the initialization: it should call \texttt{BaseApp}'s constructor\footnote{The size of the canvas should be related to the number of rows and columns in the grid, as well as to the \texttt{CELL\_SIZE}}, save the number of rows/columns in the grid and initialize \texttt{grid\_} to the proper size, with all cells being initially empty.
+
+
+\subsubsection{Simple accessors}
+
+We can proceed by providing simple accessors to the grid properties. Add the following declarations to the public scope of your class:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+const unsigned int& rows() const;
+const unsigned int& cols() const;
+const Cell& cell(unsigned int r, unsigned int c) const;
+\end{lstlisting}
+\end{minipage}
+\end{center}
+The first two methods should simply return the internal members \texttt{rows\_} and \texttt{cols\_}. Please note the \texttt{const} qualifiers both before and after the method declaration: do you understand why they are there? If not, ask the teacher!
+
+The method \texttt{cell} should be used to simplify the access to elements contained inside the vector \texttt{grid\_}. In practice, it should return the value of the cell located at the given row \texttt{r} and column \texttt{c}, and its implementation depends on how you choose to handle the content of the vector. To give an example, a matrix-like structure can be stored in a vector by writing it ``row by row'', also known as \href{https://en.wikipedia.org/wiki/Row-_and_column-major_order#Programming_languages_and_libraries}{row major ordering}. In this case, the index $k$ corresponding to a given row $i$ and column $j$ can be evaluated as $$k = i \times C + j$$
+
+
+\subsubsection{Drawing the board}
+
+We can now display the content of the grid, using the two methods below:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+void cellCenter(
+  unsigned int r,
+  unsigned int c,
+  float& x,
+  float& y
+);
+
+void draw(piksel::Graphics& g) override;
+\end{lstlisting}
+\end{minipage}
+\end{center}
+Both methods can be put in the private scope of the class. The first one is an auxiliary method that takes as an input the row and column indices of a cell and evaluate the coordinates of its center in the canvas.
+
+The method \texttt{draw} overrides \texttt{BaseApp}'s one and should render the grid. To do that, you can simply loop over all rows and columns of the grid and draw an ellipse for each cell depending on its content (use the methods \texttt{cell} and \texttt{cellCenter}, altogether with those provided by piksel's \texttt{Graphics} class).
+
+
+\subsubsection{Additional cells methods}
+
+This basic version of the \texttt{Board} class is almost finished. We just need two methods to facilitate accessing and changing the cells in the grid:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\begin{lstlisting}[style=mycpp,numbers=none]
+bool next(unsigned int c, unsigned int& r) const;
+Cell& cell(unsigned int r, unsigned int c);
+\end{lstlisting}
+\end{minipage}
+\end{center}
+The method \texttt{next} takes the index \texttt{c} of a column and returns \texttt{false} if no additional chips can be inserted there. If the column has still some space instead, the index of the first free row (from the bottom of the grid!) is stored in \texttt{r} and \texttt{true} is returned instead.
+
+WRITE ABOUT THE OTHER CELL ACCESSOR
+
+TELL TO ADD, IN THE CONSTRUCTOR, FEW LINES TO TEST THE METHODS
+
+
+\subsection{Class \texttt{Player}}
+
+
 
 \end{document}

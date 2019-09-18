@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 const int Board::CELL_SIZE = 80;
-const int Board::CELL_DIAMETER = 65;
+const int Board::CHIP_DIAMETER = 65;
 
 Board::Board(
   unsigned int rows,
@@ -12,6 +12,7 @@ Board::Board(
 : piksel::BaseApp(columns*CELL_SIZE, rows*CELL_SIZE, "Forza Quattro"), // call the constructor of the base class
   rows_(rows), // keep track of the number of rows and columns of the grid
   cols_(columns),
+  grid_(rows_*cols_, Cell::EMPTY), // make sure that at least the memory is allocated
   red_player_(nullptr), // make sure that the pointers are invalid at first: they could
   yellow_player_(nullptr) // contain any (possibly invalid) address in the beginning
 {
@@ -45,16 +46,16 @@ const unsigned int& Board::rows() const {
 
 
 const Board::Cell& Board::cell(unsigned int r, unsigned int c) const {
-  return grid_[r*cols_ + c];
+  return grid_.at(r*cols_ + c);
 }
 
 
 Board::Cell& Board::cell(unsigned int r, unsigned int c) {
-  return grid_[r*cols_ + c];
+  return grid_.at(r*cols_ + c);
 }
 
 
-void Board::cell_center(
+void Board::cellCenter(
   unsigned int r,
   unsigned int c,
   float& x,
@@ -96,7 +97,8 @@ void Board::setPlayers(Player& red, Player& yellow) {
 
 void Board::setup() {
   // fill all the grid with empty cells
-  grid_ = std::vector<Cell>(rows_*cols_, Cell::EMPTY);
+  for(auto& c : grid_)
+    c = Cell::EMPTY;
   // red goes first
   red_ = true;
   // no one won yet
@@ -130,14 +132,14 @@ void Board::draw(piksel::Graphics& g) {
   float x,y;
   for(unsigned int r=0; r<rows_; r++) {
     for(unsigned int c=0; c<cols_; c++) {
-      cell_center(r, c, x, y);
+      cellCenter(r, c, x, y);
       if(cell(r,c) == Cell::RED)
         g.fill(glm::vec4(1,0,0,1)); // red
       else if(cell(r,c) == Cell::YELLOW)
         g.fill(glm::vec4(1,1,0,1)); // yellow
       else
         g.fill(glm::vec4(1,1,1,1)); // white
-      g.ellipse(x, y, CELL_DIAMETER, CELL_DIAMETER);
+      g.ellipse(x, y, CHIP_DIAMETER, CHIP_DIAMETER);
     }
   }
 
@@ -145,12 +147,12 @@ void Board::draw(piksel::Graphics& g) {
   unsigned int r;
   if(preview_col_ < cols_ && next(preview_col_,r)) {
     // the current column has a free cell: show where the circle would end up
-    cell_center(r, preview_col_, x, y);
+    cellCenter(r, preview_col_, x, y);
     if(red_)
       g.fill(glm::vec4(0.7,0,0,1)); // dark red
     else
       g.fill(glm::vec4(0.7,0.5,0,1)); // dark yellow
-    g.ellipse(x, y, CELL_DIAMETER, CELL_DIAMETER);
+    g.ellipse(x, y, CHIP_DIAMETER, CHIP_DIAMETER);
   }
 
   // We have a winner, display some text

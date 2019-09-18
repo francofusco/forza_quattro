@@ -18,7 +18,7 @@ class Player;
 class Board : public piksel::BaseApp {
 public:
   static const int CELL_SIZE; // size of a single grid cell
-  static const int CELL_DIAMETER; // size of the circle within a cell
+  static const int CHIP_DIAMETER; // size of the circle within a cell
 
   // Simple enum to define the state of a cell; it can be used also to
   // distinguish between players colors.
@@ -67,7 +67,7 @@ private:
 
   // Given the row and column of a cell, evaluates the (x,y) coordinates of its
   // center, ie, in Piksel's canva.
-  void cell_center(
+  void cellCenter(
     unsigned int r,
     unsigned int c,
     float& x,
