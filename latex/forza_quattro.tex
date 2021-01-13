@@ -33,7 +33,7 @@ This Lab consists in programming the popular game \href{https://en.wikipedia.org
 
 \section{Using piksel}
 
-To make sure that you will be able to do the lab, we will first download and test the piksel library. Afterwards, you will be given information about few useful methods that you will need to create the four in a row application.
+To make sure that you will be able to do the lab, we will first download and test the piksel library. Afterwards, you will be given information about few useful methods that you will need to create the Four in a Row application.
 
 \subsection{Compiling the library}
 
@@ -247,7 +247,7 @@ Board& board_;
 \end{lstlisting}
 Thanks to the \texttt{Board} reference, the player will be able to query the current state of the grid and thus to make decisions for the following move.
 
-Place the two variables in the \emph{protected} scope of the class, so that they are not directly accessible from outside, but still visible to children classes.
+Place the two variables in the \emph{protected} scope of the class, so that they are not directly accessible from outside, but still visible to child classes.
 
 Finally, provide an accessor and a mutator for the attribute \texttt{color\string_}.
 
@@ -258,7 +258,7 @@ Add a constructor that takes a reference to a \texttt{Board} instance. In the \t
 \begin{lstlisting}[style=mycpp,numbers=none]
 virtual ~Player() = default;
 \end{lstlisting}
-To understand the declaration, let's first say that writing \texttt{\textasciitilde Player()} \texttt{=} \texttt{default;} is equivalent to providing an empty destructor, \ie, a destructor whose code is just \texttt{\string{\string}}.\footnote{For this reason, you do not need to add the definition of the destructor in the \texttt{.cpp} file!} However, I believe it is clearer and nicer to write explicitly \texttt{\textasciitilde Player()} \texttt{=} \texttt{default;} rather than \texttt{\textasciitilde Player()} \texttt{\string{\string}}. That being said, having a virtual destructor is not always necessary, and in our specific case would not be mandatory. However, it is part of best practices to add a (even empty) virtual destructor \emph{whenever your class has at least one virtual method}. More information about this can be found in the C++ FAQ entry ``\href{https://isocpp.org/wiki/faq/virtual-functions#virtual-dtors}{\emph{When should my destructor be virtual?}}''. It is not a big deal if you do not fully understand this, but at least be aware that if you plan to do inheritance, there are chances that you will need to provide a virtual destructor to your base class, even if empty.
+To understand the declaration, let's first say that writing \texttt{\textasciitilde Player()} \texttt{=} \texttt{default;} is equivalent to providing an empty destructor, \ie, a destructor whose code is just \texttt{\string{\string}}.\footnote{For this reason, you do not need to add the definition of the destructor in the \texttt{.cpp} file!} However, I believe it is clearer and nicer to write \texttt{\textasciitilde Player()} \texttt{=} \texttt{default;} rather than \texttt{\textasciitilde Player()} \texttt{\string{\string}}. That being said, having a virtual destructor is not always necessary, and in our specific case would not be mandatory. However, it is part of best practices to add a (even empty) virtual destructor \emph{whenever your class has at least one virtual method}. More information about this can be found in the C++ FAQ entry ``\href{https://isocpp.org/wiki/faq/virtual-functions#virtual-dtors}{\emph{When should my destructor be virtual?}}''. It is not a big deal if you do not fully understand this, but at least be aware that if you plan to do inheritance, there are chances that you will need to provide a virtual destructor to your base class, even if empty.
 
 
 \subsubsection{Virtual methods}
