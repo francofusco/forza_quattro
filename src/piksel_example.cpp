@@ -1,4 +1,5 @@
 #include <piksel/baseapp.hpp>
+#include <ctime>
 
 // example application using piksel
 class App : public piksel::BaseApp {

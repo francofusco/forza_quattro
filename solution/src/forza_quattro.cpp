@@ -1,6 +1,7 @@
 #include <forza_quattro/board.h>
 #include <forza_quattro/mouse_player.h>
 #include <forza_quattro/random_player.h>
+#include <ctime>
 
 int main(int argc, char** argv) {
   // get number of rows and columns

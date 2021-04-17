@@ -4,6 +4,7 @@ piksel
 # discard piksel's data folder and the build folder
 data
 build
+build_web
 
 # do not include LaTeX intermediary files
 latex/**/*.log

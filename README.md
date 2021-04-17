@@ -15,9 +15,26 @@ To compile and run the solution:
 
 ```
 git clone --recursive https://github.com/bernhardfritz/piksel.git
-mkdir -p build
-cd build
+mkdir build && cd build
 cmake .. -DBUILD_SOLUTIONS=ON
 make
 ./solution/solved_forza_quattro
+```
+
+To build the web-application, install [Emscripten](https://emscripten.org/docs/getting_started/downloads.html) using:
+
+```
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk/
+./emsdk install latest
+./emsdk activate latest
+source ./emsdk_env.sh
+```
+
+Then, compile almost as above:
+
+```
+mkdir build && cd build
+emcmake cmake .. -DBUILD_SOLUTIONS=ON
+emmake make
 ```
